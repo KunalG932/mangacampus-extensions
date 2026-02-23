@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 
 void main() async {
-  final extensionsDir = Directory('extensions');
+  final extensionsDir = Directory('lib/extensions');
   final repoDir = Directory('repo');
   final List<Map<String, dynamic>> repoIndex = [];
 

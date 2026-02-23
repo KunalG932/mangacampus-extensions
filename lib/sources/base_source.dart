@@ -26,8 +26,17 @@ abstract class BaseSource {
     return uri.resolve(path).toString();
   }
 
-  String? textOf(Element? element, String selector) => element?.querySelector(selector)?.text.trim();
-  String? attrOf(Element? element, String selector, String attr) => element?.querySelector(selector)?.attributes[attr];
+  String? textOf(Element? element, String? selector) {
+    if (element == null) return null;
+    if (selector == null) return element.text.trim();
+    return element.querySelector(selector)?.text.trim();
+  }
+
+  String? attrOf(Element? element, String? selector, String attr) {
+    if (element == null) return null;
+    if (selector == null) return element.attributes[attr];
+    return element.querySelector(selector)?.attributes[attr];
+  }
 
   Future<Document> fetchHtml(String url) async {
     try {

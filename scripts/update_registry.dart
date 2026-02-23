@@ -1,12 +1,12 @@
 import 'dart:io';
 
 void main() async {
-  final extensionsDir = Directory('extensions');
+  final extensionsDir = Directory('lib/extensions');
   final libDir = Directory('lib/sources');
   final registryFile = File('lib/sources/source_registry.dart');
 
   if (!await extensionsDir.exists()) {
-    print('Extensions directory not found');
+    print('Extensions directory not found at ${extensionsDir.path}');
     return;
   }
 
@@ -24,12 +24,12 @@ void main() async {
           final sourceFile = File('${extDir.path}/$extId.dart');
           
           if (await sourceFile.exists()) {
-            // Read class name from file
             final content = await sourceFile.readAsString();
             final classMatch = RegExp(r'class (\w+) extends BaseSource').firstMatch(content);
             if (classMatch != null) {
               final className = classMatch.group(1)!;
-              final relativePath = '../../extensions/$lang/$extId/$extId.dart';
+              // Use relative import within lib
+              final relativePath = '../extensions/$lang/$extId/$extId.dart';
               imports.add("import '$relativePath';");
               extensions.add({
                 'class': className,

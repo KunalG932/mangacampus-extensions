@@ -1,5 +1,5 @@
-import 'package:mangacampus_repo/models/models.dart';
-import 'package:mangacampus_repo/sources/base_source.dart';
+import '../../../models/models.dart';
+import '../../../sources/base_source.dart';
 
 class MangaBuddy extends BaseSource {
   @override
@@ -53,6 +53,6 @@ class MangaBuddy extends BaseSource {
   @override
   Future<List<String>> getPages(String chapterUrl) async {
     final doc = await fetchHtml(chapterUrl);
-    return doc.querySelectorAll(".reader-area img").map((e) => attrOf(e, null, "data-src") ?? e.attributes['src'] ?? "").toList();
+    return doc.querySelectorAll(".reader-area img").map((e) => attrOf(e, null as String?, "data-src") ?? e.attributes['src'] ?? "").toList();
   }
 }

@@ -79,13 +79,19 @@ class RemoteExtension {
     final downloadUrl = apk != null && apk.toString().endsWith('.apk')
         ? '$base/$apk'
         : '$base/sources/${json['code'] ?? json['file'] ?? apk}';
+    final pkg = json['pkg']?.toString() ?? '';
+    final iconUrl = json['icon'] != null 
+        ? '$base/${json['icon']}' 
+        : (pkg.isNotEmpty ? '$base/icons/$pkg.png' : null);
+
     return RemoteExtension(
       name: json['name']?.toString() ?? 'Unknown',
-      pkg: json['pkg']?.toString() ?? '',
+      pkg: pkg,
       version: json['version']?.toString() ?? '0',
       lang: json['lang']?.toString() ?? 'all',
       downloadUrl: downloadUrl,
-      iconUrl: json['icon'] != null ? '$base/${json['icon']}' : null,
+      iconUrl: iconUrl,
     );
+
   }
 }

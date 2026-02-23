@@ -1,5 +1,5 @@
-import '../models/models.dart';
-import 'base_source.dart';
+import '../../../models/models.dart';
+import '../../../sources/base_source.dart';
 
 class AsuraScans extends BaseSource {
   @override
@@ -12,7 +12,6 @@ class AsuraScans extends BaseSource {
   @override
   Future<List<Manga>> getPopular(int page) async {
     final document = await fetchHtml("$baseUrl/series?page=$page&status=all&type=all&order=popular");
-    // Site uses <a> tags as the main card container in the grid
     final elements = document.querySelectorAll("a[href*='/series/']");
     return elements.where((e) => e.querySelector("img") != null).map((e) => Manga(
       title: textOf(e, "span.font-bold") ?? textOf(e, "div.text-white") ?? "Unknown",
@@ -47,11 +46,10 @@ class AsuraScans extends BaseSource {
   @override
   Future<List<Chapter>> getChapters(String mangaUrl) async {
     final doc = await fetchHtml(mangaUrl);
-    // Updated selector for chapters
     final elements = doc.querySelectorAll("div.group.flex.justify-between, a.group.flex.justify-between");
     return elements.map((e) => Chapter(
       name: textOf(e, "h3") ?? textOf(e, "span.font-medium") ?? "Chapter",
-      url: urljoin(baseUrl, (e.tagName == 'a' ? e.attributes['href'] : attrOf(e, "a", "href")) ?? ""),
+      url: urljoin(baseUrl, (e.localName == 'a' ? e.attributes['href'] : attrOf(e, "a", "href")) ?? ""),
       dateUploaded: textOf(e, "span.text-\\[\\#A2A2A2\\]") ?? textOf(e, "span.text-gray-400"),
     )).toList();
   }
@@ -59,7 +57,6 @@ class AsuraScans extends BaseSource {
   @override
   Future<List<String>> getPages(String chapterUrl) async {
     final doc = await fetchHtml(chapterUrl);
-    // Asura Scans often uses specific classes for chapter images
     return doc.querySelectorAll("img.mx-auto, div.flex.flex-col img").map((e) => e.attributes['src'] ?? "").where((s) => s.isNotEmpty).toList();
   }
 }
