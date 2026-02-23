@@ -73,13 +73,19 @@ class RemoteExtension {
   });
 
   factory RemoteExtension.fromJson(Map<String, dynamic> json, String repoBaseUrl) {
+    final base = repoBaseUrl.endsWith('/') ? repoBaseUrl.substring(0, repoBaseUrl.length - 1) : repoBaseUrl;
+    // Tachiyomi-style: apk at repo root (e.g. index has "apk": "tachiyomi-all.ahottie-v1.4.2.apk")
+    final apk = json['apk'] as String?;
+    final downloadUrl = apk != null && apk.toString().endsWith('.apk')
+        ? '$base/$apk'
+        : '$base/sources/${json['code'] ?? json['file'] ?? apk}';
     return RemoteExtension(
-      name: json['name'],
-      pkg: json['pkg'],
-      version: json['version'],
-      lang: json['lang'],
-      downloadUrl: "$repoBaseUrl/sources/${json['code'] ?? json['apk'] ?? json['file']}",
-      iconUrl: json['icon'] != null ? "$repoBaseUrl/${json['icon']}" : null,
+      name: json['name']?.toString() ?? 'Unknown',
+      pkg: json['pkg']?.toString() ?? '',
+      version: json['version']?.toString() ?? '0',
+      lang: json['lang']?.toString() ?? 'all',
+      downloadUrl: downloadUrl,
+      iconUrl: json['icon'] != null ? '$base/${json['icon']}' : null,
     );
   }
 }
