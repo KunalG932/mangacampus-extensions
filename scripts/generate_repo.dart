@@ -68,4 +68,12 @@ void main() async {
 
   await File('repo/index.min.json').writeAsString(json.encode(repoIndex));
   print('Done: ${repoIndex.length} extensions');
+
+  print('Updating source registry...');
+  final result = await Process.run('dart', ['scripts/update_registry.dart']);
+  if (result.exitCode == 0) {
+    print(result.stdout);
+  } else {
+    print('Failed to update registry: ${result.stderr}');
+  }
 }

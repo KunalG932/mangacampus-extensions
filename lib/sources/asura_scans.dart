@@ -12,10 +12,11 @@ class AsuraScans extends BaseSource {
   @override
   Future<List<Manga>> getPopular(int page) async {
     final document = await fetchHtml("$baseUrl/series?page=$page&status=all&type=all&order=popular");
-    final elements = document.querySelectorAll("div.grid > div.relative.group");
-    return elements.map((e) => Manga(
-      title: textOf(e, "span.block.text-\\[13\\.3px\\].font-bold") ?? "Unknown",
-      url: attrOf(e, "a", "href") ?? "",
+    // Site uses <a> tags as the main card container in the grid
+    final elements = document.querySelectorAll("a[href*='/series/']");
+    return elements.where((e) => e.querySelector("img") != null).map((e) => Manga(
+      title: textOf(e, "span.font-bold") ?? textOf(e, "div.text-white") ?? "Unknown",
+      url: urljoin(baseUrl, e.attributes['href'] ?? ""),
       thumbnailUrl: attrOf(e, "img", "src") ?? "",
     )).toList();
   }
@@ -23,10 +24,10 @@ class AsuraScans extends BaseSource {
   @override
   Future<List<Manga>> search(String query, int page) async {
     final document = await fetchHtml("$baseUrl/series?search=$query&page=$page");
-    final elements = document.querySelectorAll("div.grid > div.relative.group");
-    return elements.map((e) => Manga(
-      title: textOf(e, "span.block.text-\\[13\\.3px\\].font-bold") ?? "Unknown",
-      url: attrOf(e, "a", "href") ?? "",
+    final elements = document.querySelectorAll("a[href*='/series/']");
+    return elements.where((e) => e.querySelector("img") != null).map((e) => Manga(
+      title: textOf(e, "span.font-bold") ?? textOf(e, "div.text-white") ?? "Unknown",
+      url: urljoin(baseUrl, e.attributes['href'] ?? ""),
       thumbnailUrl: attrOf(e, "img", "src") ?? "",
     )).toList();
   }
@@ -36,27 +37,29 @@ class AsuraScans extends BaseSource {
     final doc = await fetchHtml(mangaUrl);
     return MangaDetails(
       title: textOf(doc.body, "h1") ?? "",
-      description: textOf(doc.body, "span.font-medium.text-sm.text-\\[\\#A2A2A2\\]") ?? "",
-      genres: doc.querySelectorAll("button.bg-\\[\\#343434\\]").map((e) => e.text.trim()).toList(),
+      description: textOf(doc.body, "span.font-medium.text-sm") ?? "",
+      genres: doc.querySelectorAll("button.bg-\\[\\#343434\\], a.bg-\\[\\#343434\\]").map((e) => e.text.trim()).toList(),
       status: "Unknown",
-      thumbnailUrl: attrOf(doc.body, "img.w-full.h-full.object-cover", "src") ?? "",
+      thumbnailUrl: attrOf(doc.body, "img[alt='poster']", "src") ?? attrOf(doc.body, "img.w-full.h-full", "src") ?? "",
     );
   }
 
   @override
   Future<List<Chapter>> getChapters(String mangaUrl) async {
     final doc = await fetchHtml(mangaUrl);
-    final elements = doc.querySelectorAll("div.overflow-y-auto div.group.flex.justify-between");
+    // Updated selector for chapters
+    final elements = doc.querySelectorAll("div.group.flex.justify-between, a.group.flex.justify-between");
     return elements.map((e) => Chapter(
-      name: textOf(e, "h3") ?? "Chapter",
-      url: attrOf(e, "a", "href") ?? "",
-      dateUploaded: textOf(e, "span.text-\\[\\#A2A2A2\\]"),
+      name: textOf(e, "h3") ?? textOf(e, "span.font-medium") ?? "Chapter",
+      url: urljoin(baseUrl, (e.tagName == 'a' ? e.attributes['href'] : attrOf(e, "a", "href")) ?? ""),
+      dateUploaded: textOf(e, "span.text-\\[\\#A2A2A2\\]") ?? textOf(e, "span.text-gray-400"),
     )).toList();
   }
 
   @override
   Future<List<String>> getPages(String chapterUrl) async {
     final doc = await fetchHtml(chapterUrl);
-    return doc.querySelectorAll("img.mx-auto").map((e) => e.attributes['src'] ?? "").where((s) => s.isNotEmpty).toList();
+    // Asura Scans often uses specific classes for chapter images
+    return doc.querySelectorAll("img.mx-auto, div.flex.flex-col img").map((e) => e.attributes['src'] ?? "").where((s) => s.isNotEmpty).toList();
   }
 }

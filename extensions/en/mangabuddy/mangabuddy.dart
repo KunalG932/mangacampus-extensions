@@ -1,5 +1,5 @@
-import '../models/models.dart';
-import 'base_source.dart';
+import 'package:mangacampus_repo/models/models.dart';
+import 'package:mangacampus_repo/sources/base_source.dart';
 
 class MangaBuddy extends BaseSource {
   @override
@@ -12,8 +12,8 @@ class MangaBuddy extends BaseSource {
   @override
   Future<List<Manga>> getPopular(int page) async {
     final doc = await fetchHtml("$baseUrl/latest?page=$page");
-    return doc.querySelectorAll(".item").map((e) => Manga(
-      title: textOf(e, ".title") ?? "Unknown",
+    return doc.querySelectorAll(".manga-item, .item").map((e) => Manga(
+      title: textOf(e, ".title, a.name") ?? "Unknown",
       url: urljoin(baseUrl, attrOf(e, "a", "href") ?? ""),
       thumbnailUrl: attrOf(e, "img", "data-src") ?? attrOf(e, "img", "src") ?? "",
     )).toList();
@@ -22,10 +22,10 @@ class MangaBuddy extends BaseSource {
   @override
   Future<List<Manga>> search(String query, int page) async {
     final doc = await fetchHtml("$baseUrl/search?q=$query&page=$page");
-    return doc.querySelectorAll(".item").map((e) => Manga(
-      title: textOf(e, ".title") ?? "Unknown",
+    return doc.querySelectorAll(".manga-item, .item").map((e) => Manga(
+      title: textOf(e, ".title, a.name") ?? "Unknown",
       url: urljoin(baseUrl, attrOf(e, "a", "href") ?? ""),
-      thumbnailUrl: attrOf(e, "img", "data-src") ?? "",
+      thumbnailUrl: attrOf(e, "img", "data-src") ?? attrOf(e, "img", "src") ?? "",
     )).toList();
   }
 

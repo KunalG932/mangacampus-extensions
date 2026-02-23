@@ -1,8 +1,0 @@
-{
-  "name": "MangaKakalot",
-  "version": "1.0.5",
-  "versionCode": 5,
-  "author": "MangaCampus",
-  "nsfw": 0,
-  "description": "Scraper for MangaKakalot.gg"
-}

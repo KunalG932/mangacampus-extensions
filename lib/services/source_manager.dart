@@ -1,15 +1,13 @@
 import '../sources/base_source.dart';
-import '../sources/mangakakalot.dart';
-import '../sources/asura_scans.dart';
-import '../sources/mangabuddy.dart';
+import '../sources/source_registry.dart';
 
 class SourceManager {
   static final SourceManager _instance = SourceManager._internal();
   factory SourceManager() => _instance;
   SourceManager._internal() {
-    registerSource(MangaKakalot());
-    registerSource(AsuraScans());
-    registerSource(MangaBuddy());
+    for (final source in getRegisteredSources()) {
+      registerSource(source);
+    }
   }
 
   final List<BaseSource> _sources = [];
