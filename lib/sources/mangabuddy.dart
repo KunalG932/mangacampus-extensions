@@ -53,6 +53,9 @@ class MangaBuddy extends BaseSource {
   @override
   Future<List<String>> getPages(String chapterUrl) async {
     final doc = await fetchHtml(chapterUrl);
-    return doc.querySelectorAll(".reader-area img").map((e) => attrOf(e, null, "data-src") ?? e.attributes['src'] ?? "").toList();
+    return doc
+        .querySelectorAll(".reader-area img")
+        .map((e) => e.attributes['data-src'] ?? e.attributes['src'] ?? "")
+        .toList();
   }
 }
