@@ -1,0 +1,8 @@
+{
+  "name": "Asura Scans",
+  "version": "1.4.2",
+  "versionCode": 42,
+  "author": "MangaCampus",
+  "nsfw": 0,
+  "description": "Scraper for Asura Comic (Tailwind Layout)"
+}

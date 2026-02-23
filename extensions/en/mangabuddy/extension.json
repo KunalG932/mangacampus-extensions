@@ -1,0 +1,8 @@
+{
+  "name": "MangaBuddy",
+  "version": "1.0.0",
+  "versionCode": 1,
+  "author": "MangaCampus",
+  "nsfw": 0,
+  "description": "Scraper for MangaBuddy.com"
+}

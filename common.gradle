@@ -1,0 +1,15 @@
+// This file mimics the Mihon common.gradle logic
+// It defines shared metadata for all MangaCampus extensions
+
+def VERSION_NAME = "1.0.0"
+def VERSION_CODE = 1
+
+ext {
+    compileSdkVersion = 34
+    minSdkVersion = 21
+    targetSdkVersion = 34
+    
+    // Shared dependencies would be listed here in a real Android build
+    lib_jsoup = "1.16.1"
+    lib_okhttp = "4.11.0"
+}
